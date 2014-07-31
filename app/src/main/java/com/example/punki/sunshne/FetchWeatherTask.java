@@ -1,5 +1,6 @@
 package com.example.punki.sunshne;
 
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -10,18 +11,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class FetchWeatherTask extends AsyncTask<Object, Integer, Void> {
+public class FetchWeatherTask extends AsyncTask<FetchWeatherTask.Param, Integer, Void> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     @Override
-    protected Void doInBackground(Object... params) {
-        String json = readJson();
+    protected Void doInBackground(Param... params) {
+        String json = readJson(params[0]);
         Log.i(LOG_TAG, "FetchWeatherTask result: "+json);
         return null;
     }
 
-    private String readJson() {
+    private String readJson(Param param) {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -34,7 +35,17 @@ public class FetchWeatherTask extends AsyncTask<Object, Integer, Void> {
             // Construct the URL for the OpenWeatherMap query
             // Possible parameters are available at OWM's forecast API page, at
             // http://openweathermap.org/API#forecast
-            URL url = new URL("http://api.openweathermap.org/data/2.5/forecast/daily?q=94043&mode=json&units=metric&cnt=7");
+            Uri.Builder uriBuilder = new Uri.Builder();
+            Uri uri = uriBuilder
+                    .scheme("http")
+                    .appendEncodedPath("/api.openweathermap.org/data/2.5/forecast/daily")
+                    .appendQueryParameter("q", String.valueOf(param.postcode))
+                    .appendQueryParameter("cnt", String.valueOf(param.limit))
+                    .appendQueryParameter("mode", "json")
+                    .appendQueryParameter("units", "metric").build();
+            String uriAsString = uri.toString();
+            Log.v(LOG_TAG, "uri string: " + uriAsString);
+            URL url = new URL(uriAsString);
 
             // Create the request to OpenWeatherMap, and open the connection
             urlConnection = (HttpURLConnection) url.openConnection();
@@ -83,4 +94,14 @@ public class FetchWeatherTask extends AsyncTask<Object, Integer, Void> {
         }
     }
 
+    public static class Param {
+        public final int postcode;
+        public final int limit;
+
+        public Param(int postcode, int limit) {
+
+            this.postcode = postcode;
+            this.limit = limit;
+        }
+    }
 }
