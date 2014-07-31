@@ -1,21 +1,19 @@
 package com.example.punki.sunshne.model;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
-import java.util.List;
 
 public class WeatherModel {
     public final String country;
     public final String city;
-    public final List<Day> days;
+    public final Collection<Day> days;
 
-    public WeatherModel(String country, String city, List<Day> days) {
+    public WeatherModel(String country, String city, Collection<Day> days) {
         this.country = country;
         this.city = city;
         this.days = new ArrayList<Day>(days);
     }
-
 
     @Override
     public String toString() {

@@ -13,6 +13,7 @@ import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -41,8 +42,8 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
     }
 
     private WeatherModel buildWeatherModel(OpenWeatherResponse response) {
-        List<Forecast> forecasts = response.list;
-        List<WeatherModel.Day> days = new ArrayList<WeatherModel.Day>(forecasts.size());
+        Collection<Forecast> forecasts = response.list;
+        Collection<WeatherModel.Day> days = new ArrayList<WeatherModel.Day>(forecasts.size());
         for (Forecast f : forecasts) {
             Calendar calendar = Calendar.getInstance(GMT);
             calendar.setTimeInMillis(f.dt * 1000);

@@ -15,6 +15,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer, WeatherModel> {
@@ -40,9 +41,9 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
         arrayAdapter.addAll(format(weatherModel));
     }
 
-    private ArrayList<String> format(WeatherModel weatherModel) {
+    private Collection<String> format(WeatherModel weatherModel) {
         SimpleDateFormat dateFormat = new SimpleDateFormat();
-        ArrayList<String> forecasts = new ArrayList<String>(weatherModel.days.size());
+        Collection<String> forecasts = new ArrayList<String>(weatherModel.days.size());
         for (WeatherModel.Day day : weatherModel.days) {
             String forecast = dateFormat.format(day.date) +
                     " Weather: " + day.weather +
