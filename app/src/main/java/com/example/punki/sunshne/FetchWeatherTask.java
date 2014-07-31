@@ -36,10 +36,8 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
 
     @Override
     protected void onPostExecute(WeatherModel weatherModel) {
-        super.onPostExecute(weatherModel);
-        List<String> forecasts = format(weatherModel);
-
-        arrayAdapter.addAll(forecasts);
+        arrayAdapter.clear();
+        arrayAdapter.addAll(format(weatherModel));
     }
 
     private ArrayList<String> format(WeatherModel weatherModel) {
