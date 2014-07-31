@@ -4,6 +4,8 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.punki.sunshne.model.FetchWeatherModel;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,18 +13,20 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class FetchWeatherTask extends AsyncTask<FetchWeatherTask.Param, Integer, Void> {
+public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer, FetchWeatherModel> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     @Override
-    protected Void doInBackground(Param... params) {
-        String json = readJson(params[0]);
-        Log.i(LOG_TAG, "FetchWeatherTask result: "+json);
-        return null;
+    protected FetchWeatherModel doInBackground(Params... params) {
+        FetchWeatherModel fetchWeatherModel = doInBackgroundSpecific(params);
+        Log.v(LOG_TAG, "FetchWeatherModel: " + fetchWeatherModel);
+        return fetchWeatherModel;
     }
 
-    private String readJson(Param param) {
+    protected abstract FetchWeatherModel doInBackgroundSpecific(Params... params);
+
+    protected final String readJson(Uri uri) {
         // These two need to be declared outside the try/catch
         // so that they can be closed in the finally block.
         HttpURLConnection urlConnection = null;
@@ -32,17 +36,6 @@ public class FetchWeatherTask extends AsyncTask<FetchWeatherTask.Param, Integer,
         String forecastJsonStr = null;
 
         try {
-            // Construct the URL for the OpenWeatherMap query
-            // Possible parameters are available at OWM's forecast API page, at
-            // http://openweathermap.org/API#forecast
-            Uri.Builder uriBuilder = new Uri.Builder();
-            Uri uri = uriBuilder
-                    .scheme("http")
-                    .appendEncodedPath("/api.openweathermap.org/data/2.5/forecast/daily")
-                    .appendQueryParameter("q", String.valueOf(param.postcode))
-                    .appendQueryParameter("cnt", String.valueOf(param.limit))
-                    .appendQueryParameter("mode", "json")
-                    .appendQueryParameter("units", "metric").build();
             String uriAsString = uri.toString();
             Log.v(LOG_TAG, "uri string: " + uriAsString);
             URL url = new URL(uriAsString);
@@ -91,17 +84,6 @@ public class FetchWeatherTask extends AsyncTask<FetchWeatherTask.Param, Integer,
                     Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
-        }
-    }
-
-    public static class Param {
-        public final int postcode;
-        public final int limit;
-
-        public Param(int postcode, int limit) {
-
-            this.postcode = postcode;
-            this.limit = limit;
         }
     }
 }

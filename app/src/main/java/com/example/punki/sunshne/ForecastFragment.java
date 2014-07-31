@@ -3,7 +3,6 @@ package com.example.punki.sunshne;
 import android.app.Fragment;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,15 +12,10 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
-import java.net.URL;
+import com.example.punki.sunshne.openweathermap.OpenWeatherFetchTask;
+
 import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -37,9 +31,7 @@ public class ForecastFragment extends Fragment {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         List<String> weather = Arrays.asList("1", "2", "3", "4");
-        loadDataFromServer();
         addForecastToUI(rootView, weather);
-
         return rootView;
     }
 
@@ -60,8 +52,8 @@ public class ForecastFragment extends Fragment {
     }
 
     private void loadDataFromServer() {
-        FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
-        AsyncTask execute = fetchWeatherTask.execute(new FetchWeatherTask.Param(61255, 7));
+        OpenWeatherFetchTask fetchWeatherTask = new OpenWeatherFetchTask();
+        AsyncTask execute = fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(61255, 7));
     }
 
     @Override
