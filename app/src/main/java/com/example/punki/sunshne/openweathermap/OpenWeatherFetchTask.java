@@ -2,6 +2,7 @@ package com.example.punki.sunshne.openweathermap;
 
 import android.net.Uri;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import com.example.punki.sunshne.model.FetchWeatherModel;
 import com.example.punki.sunshne.FetchWeatherTask;
@@ -12,6 +13,10 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
 
     private final String LOG_TAG = OpenWeatherFetchTask.class.getSimpleName();
     private final Gson gson = new Gson();
+
+    public OpenWeatherFetchTask(ArrayAdapter arrayAdapter) {
+        super(arrayAdapter);
+    }
 
     @Override
     protected FetchWeatherModel doInBackgroundSpecific(Param... params) {

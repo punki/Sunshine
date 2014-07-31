@@ -3,6 +3,7 @@ package com.example.punki.sunshne;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 
 import com.example.punki.sunshne.model.FetchWeatherModel;
 
@@ -17,11 +18,23 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
+    private final ArrayAdapter arrayAdapter;
+
+    protected FetchWeatherTask(ArrayAdapter arrayAdapter) {
+        this.arrayAdapter = arrayAdapter;
+    }
+
     @Override
     protected FetchWeatherModel doInBackground(Params... params) {
         FetchWeatherModel fetchWeatherModel = doInBackgroundSpecific(params);
         Log.v(LOG_TAG, "FetchWeatherModel: " + fetchWeatherModel);
         return fetchWeatherModel;
+    }
+
+    @Override
+    protected void onPostExecute(FetchWeatherModel fetchWeatherModel) {
+        super.onPostExecute(fetchWeatherModel);
+        arrayAdapter.addAll("tomek","pankowski");
     }
 
     protected abstract FetchWeatherModel doInBackgroundSpecific(Params... params);
