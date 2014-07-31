@@ -4,22 +4,31 @@ import android.net.Uri;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
-import com.example.punki.sunshne.model.FetchWeatherModel;
+import com.example.punki.sunshne.model.WeatherModel;
 import com.example.punki.sunshne.FetchWeatherTask;
+import com.example.punki.sunshne.openweathermap.model.City;
+import com.example.punki.sunshne.openweathermap.model.Forecast;
 import com.example.punki.sunshne.openweathermap.model.OpenWeatherResponse;
 import com.google.gson.Gson;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
+
 public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.Param> {
 
+    public static final TimeZone GMT = TimeZone.getTimeZone("GMT");
     private final String LOG_TAG = OpenWeatherFetchTask.class.getSimpleName();
     private final Gson gson = new Gson();
 
-    public OpenWeatherFetchTask(ArrayAdapter arrayAdapter) {
+    public OpenWeatherFetchTask(ArrayAdapter<String> arrayAdapter) {
         super(arrayAdapter);
     }
 
     @Override
-    protected FetchWeatherModel doInBackgroundSpecific(Param... params) {
+    protected WeatherModel doInBackgroundSpecific(Param... params) {
         Uri uri = buildUri(params[0]);
 
         String json = readJson(uri);
@@ -28,7 +37,25 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
         OpenWeatherResponse openWeatherResponse = gson.fromJson(json, OpenWeatherResponse.class);
         Log.v(LOG_TAG, "OpenWeatherResponse: " + openWeatherResponse);
 
-        return new FetchWeatherModel(openWeatherResponse);
+        return buildWeatherModel(openWeatherResponse);
+    }
+
+    private WeatherModel buildWeatherModel(OpenWeatherResponse response) {
+        List<Forecast> forecasts = response.list;
+        List<WeatherModel.Day> days = new ArrayList<WeatherModel.Day>(forecasts.size());
+        for (Forecast f : forecasts) {
+            Calendar calendar = Calendar.getInstance(GMT);
+            calendar.setTimeInMillis(f.dt * 1000);
+            WeatherModel.Day day=new WeatherModel.Day(
+                    calendar.getTime(),
+                    f.temp.min,
+                    f.temp.max,
+                    f.weather.get(0).main);
+            days.add(day);
+        }
+
+        City city = response.city;
+        return new WeatherModel(city.country, city.name, days);
     }
 
     private Uri buildUri(Param param) {

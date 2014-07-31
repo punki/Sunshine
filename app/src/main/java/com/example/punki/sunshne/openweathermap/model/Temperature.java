@@ -1,11 +1,11 @@
 package com.example.punki.sunshne.openweathermap.model;
 
-public class Temp {
-    public double min;
-    public double max;
-    public double day;
+public class Temperature {
+    public final double min;
+    public final double max;
+    public final double day;
 
-    public Temp(double min, double max, double day) {
+    public Temperature(double min, double max, double day) {
         this.min = min;
         this.max = max;
         this.day = day;
@@ -13,7 +13,7 @@ public class Temp {
 
     @Override
     public String toString() {
-        return "Temp{" +
+        return "Temperature{" +
                 "min=" + min +
                 ", max=" + max +
                 ", day=" + day +

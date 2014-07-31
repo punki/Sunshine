@@ -3,12 +3,12 @@ package com.example.punki.sunshne.openweathermap.model;
 import java.util.List;
 
 public class Forecast {
-    public long dt;
-    public Temp temp;
-    public List<Weather> weather;
-    public double rain;
+    public final long dt;
+    public final Temperature temp;
+    public final List<Weather> weather;
+    public final double rain;
 
-    public Forecast(long dt, Temp temp, List<Weather> weather, double rain) {
+    public Forecast(long dt, Temperature temp, List<Weather> weather, double rain) {
         this.dt = dt;
         this.temp = temp;
         this.weather = weather;

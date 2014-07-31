@@ -5,7 +5,7 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
-import com.example.punki.sunshne.model.FetchWeatherModel;
+import com.example.punki.sunshne.model.WeatherModel;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,31 +13,52 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
 
-public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer, FetchWeatherModel> {
+public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer, WeatherModel> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
-    private final ArrayAdapter arrayAdapter;
+    private final ArrayAdapter<String> arrayAdapter;
 
-    protected FetchWeatherTask(ArrayAdapter arrayAdapter) {
+    protected FetchWeatherTask(ArrayAdapter<String> arrayAdapter) {
         this.arrayAdapter = arrayAdapter;
     }
 
     @Override
-    protected FetchWeatherModel doInBackground(Params... params) {
-        FetchWeatherModel fetchWeatherModel = doInBackgroundSpecific(params);
-        Log.v(LOG_TAG, "FetchWeatherModel: " + fetchWeatherModel);
-        return fetchWeatherModel;
+    protected WeatherModel doInBackground(Params... params) {
+        WeatherModel weatherModel = doInBackgroundSpecific(params);
+        Log.v(LOG_TAG, "WeatherModel: " + weatherModel);
+        return weatherModel;
     }
 
     @Override
-    protected void onPostExecute(FetchWeatherModel fetchWeatherModel) {
-        super.onPostExecute(fetchWeatherModel);
-        arrayAdapter.addAll("tomek","pankowski");
+    protected void onPostExecute(WeatherModel weatherModel) {
+        super.onPostExecute(weatherModel);
+        List<String> forecasts = format(weatherModel);
+
+        arrayAdapter.addAll(forecasts);
     }
 
-    protected abstract FetchWeatherModel doInBackgroundSpecific(Params... params);
+    private ArrayList<String> format(WeatherModel weatherModel) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
+        ArrayList<String> forecasts = new ArrayList<String>(weatherModel.days.size());
+        for (WeatherModel.Day day : weatherModel.days) {
+            String forecast = dateFormat.format(day.date) +
+                    " Weather: " + day.weather +
+                    " Temp min: " + day.minTemperature +
+                    " max: " + day.maxTemperature +
+                    " " + weatherModel.country +
+                    ", " + weatherModel.city;
+            forecasts.add(forecast);
+        }
+        return forecasts;
+
+    }
+
+    protected abstract WeatherModel doInBackgroundSpecific(Params... params);
 
     protected final String readJson(Uri uri) {
         // These two need to be declared outside the try/catch
