@@ -9,7 +9,7 @@
     tools:context="com.example.punki.sunshne.DetailActivity.DetailFragment">
 
     <TextView
-        android:id="@+id/detail_forecast"
+        android:id="@+id/detail_text"
         android:text="Detail"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />

@@ -61,8 +61,8 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CharSequence text = parent.getItemAtPosition(position).toString();
-                Intent detailIntent = new Intent(view.getContext(), DetailActivity.class);
-                detailIntent.putExtra("text", text);
+                Intent detailIntent = new Intent(getActivity(), DetailActivity.class);
+                detailIntent.putExtra(Intent.EXTRA_TEXT, text);
                 startActivity(detailIntent);
             }
         };

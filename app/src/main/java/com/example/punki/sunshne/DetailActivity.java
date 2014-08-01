@@ -2,7 +2,9 @@ package com.example.punki.sunshne;
 
 import android.app.Activity;
 import android.app.Fragment;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -13,6 +15,7 @@ import android.widget.TextView;
 public class DetailActivity extends Activity {
 
     public static final String DETAIL_FRAGMENT = "detailFragment";
+    private final String LOG_TAG = DetailActivity.class.getSimpleName();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +27,7 @@ public class DetailActivity extends Activity {
     }
 
     private DetailFragment startDetailFragment() {
+        Log.v(LOG_TAG, "startDetailFragment");
         DetailFragment detailFragment = new DetailFragment();
         getFragmentManager().beginTransaction()
                 .add(R.id.container, detailFragment, DETAIL_FRAGMENT)
@@ -33,13 +37,14 @@ public class DetailActivity extends Activity {
 
     @Override
     protected void onStart() {
+        //chwilowo nie uzywamy moze sie zostawiam jako eksperyment
+        Log.v(LOG_TAG, "onStart");
         super.onStart();
         DetailFragment detailFragment =
                 (DetailFragment) getFragmentManager().findFragmentByTag(DETAIL_FRAGMENT);
         if (detailFragment == null) {
             detailFragment = startDetailFragment();
         }
-        detailFragment.updText(getIntent().getStringExtra("text"));
     }
 
     @Override
@@ -63,18 +68,20 @@ public class DetailActivity extends Activity {
 
     public static class DetailFragment extends Fragment {
 
-        private TextView textView;
-
-        public void updText(String text) {
-            textView.setText(text);
-        }
-
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                 Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_detail, container, false);
-            textView = (TextView) rootView.findViewById(R.id.detail_forecast);
+            processIntent(rootView);
             return rootView;
+        }
+
+        private void processIntent(View rootView) {
+            Intent intent = getActivity().getIntent();
+            if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
+                TextView textView = (TextView) rootView.findViewById(R.id.detail_text);
+                textView.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+            }
         }
     }
 }
