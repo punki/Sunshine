@@ -2,6 +2,7 @@ package com.example.punki.sunshne;
 
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +35,7 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         initForecastAdapter(rootView);
+        loadDataFromServer();
         return rootView;
     }
 
@@ -59,7 +61,9 @@ public class ForecastFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 CharSequence text = parent.getItemAtPosition(position).toString();
-                Toast.makeText(view.getContext(), text, Toast.LENGTH_SHORT).show();
+                Intent detailIntent = new Intent(view.getContext(), DetailActivity.class);
+                detailIntent.putExtra("text", text);
+                startActivity(detailIntent);
             }
         };
     }
