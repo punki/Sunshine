@@ -70,6 +70,7 @@ public class ForecastFragment extends Fragment {
 
     private void loadDataFromServer() {
         OpenWeatherFetchTask fetchWeatherTask = new OpenWeatherFetchTask(weatherAdapter);
+
         fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(61255, 7));
     }
 
