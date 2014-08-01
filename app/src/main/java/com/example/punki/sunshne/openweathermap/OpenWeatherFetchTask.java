@@ -14,6 +14,7 @@ import com.google.gson.Gson;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.TimeZone;
@@ -34,6 +35,9 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
 
         String json = readJson(uri);
         Log.i(LOG_TAG, "FetchWeatherTask result: "+json);
+        if (json == null) {
+            return new WeatherModel("Error","", Collections.<WeatherModel.Day>emptyList());
+        }
 
         OpenWeatherResponse openWeatherResponse = gson.fromJson(json, OpenWeatherResponse.class);
         Log.v(LOG_TAG, "OpenWeatherResponse: " + openWeatherResponse);
