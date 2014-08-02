@@ -10,5 +10,9 @@
     <string name="pref_location_label">Location</string>
     <string name="pref_location_key" translatable="false">location</string>
     <string name="pref_location_default" translatable="false">61255</string>
+    <string name="pref_unit_key">Unit</string>
+    <string name="pref_unit_title">Unit</string>
+    <string name="pref_unit_dialog_title">Unit</string>
+    <string name="pref_unit_default">metric</string>
 
 </resources>
