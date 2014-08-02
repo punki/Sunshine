@@ -3,11 +3,12 @@ package com.example.punki.sunshne;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements ForecastFragment.ForecastFragmentParamSupplier {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,6 +41,13 @@ public class MainActivity extends Activity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public ForecastFragment.Param getForecastFragmentParam() {
+        String postalCode = PreferenceManager.getDefaultSharedPreferences(this)
+                .getString(getString(R.string.pref_location_key), "default");
+        return new ForecastFragment.Param(postalCode);
     }
 
 

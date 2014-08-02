@@ -75,10 +75,10 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
     }
 
     public static class Param {
-        public final int postcode;
+        public final String postcode;
         public final int limit;
 
-        public Param(int postcode, int limit) {
+        public Param(String postcode, int limit) {
 
             this.postcode = postcode;
             this.limit = limit;

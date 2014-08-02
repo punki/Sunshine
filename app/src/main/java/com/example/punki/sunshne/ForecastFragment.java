@@ -1,7 +1,6 @@
 package com.example.punki.sunshne;
 
 import android.app.Fragment;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,12 +12,8 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import com.example.punki.sunshne.openweathermap.OpenWeatherFetchTask;
-
-import java.util.Arrays;
-import java.util.List;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -35,8 +30,13 @@ public class ForecastFragment extends Fragment {
                              Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
         initForecastAdapter(rootView);
-        loadDataFromServer();
         return rootView;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        loadDataFromServer();
     }
 
     @Override
@@ -70,8 +70,8 @@ public class ForecastFragment extends Fragment {
 
     private void loadDataFromServer() {
         OpenWeatherFetchTask fetchWeatherTask = new OpenWeatherFetchTask(weatherAdapter);
-
-        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(61255, 7));
+        Param ffParam = ((ForecastFragmentParamSupplier) getActivity()).getForecastFragmentParam();
+        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 7));
     }
 
     @Override
@@ -88,5 +88,17 @@ public class ForecastFragment extends Fragment {
         return super.onOptionsItemSelected(item);
     }
 
+    public static class Param {
+        public final String location;
 
+        public Param(String location) {
+            this.location = location;
+        }
+    }
+
+
+
+    public static interface ForecastFragmentParamSupplier {
+        Param getForecastFragmentParam();
+    }
 }
