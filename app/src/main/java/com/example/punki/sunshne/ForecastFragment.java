@@ -71,7 +71,8 @@ public class ForecastFragment extends Fragment {
     private void loadDataFromServer() {
         OpenWeatherFetchTask fetchWeatherTask = new OpenWeatherFetchTask(weatherAdapter);
         Param ffParam = ((ForecastFragmentParamSupplier) getActivity()).getForecastFragmentParam();
-        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 7));
+        double temperatureModifier = ffParam.units == Units.metric ? 1 : 33.8;
+        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 7, temperatureModifier));
     }
 
     @Override
@@ -90,12 +91,13 @@ public class ForecastFragment extends Fragment {
 
     public static class Param {
         public final String location;
+        public final Units units;
 
-        public Param(String location) {
+        public Param(String location, Units units) {
             this.location = location;
+            this.units = units;
         }
     }
-
 
 
     public static interface ForecastFragmentParamSupplier {

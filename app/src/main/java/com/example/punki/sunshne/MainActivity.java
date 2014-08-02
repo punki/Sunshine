@@ -2,6 +2,7 @@ package com.example.punki.sunshne;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -45,9 +46,12 @@ public class MainActivity extends Activity implements ForecastFragment.ForecastF
 
     @Override
     public ForecastFragment.Param getForecastFragmentParam() {
-        String postalCode = PreferenceManager.getDefaultSharedPreferences(this)
-                .getString(getString(R.string.pref_location_key), "default");
-        return new ForecastFragment.Param(postalCode);
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        String postalCode = sharedPreferences.getString(getString(R.string.pref_location_key),
+                "61255");
+        Units units = Units.valueOf(sharedPreferences.getString(getString(R.string.pref_unit_key),
+                Units.metric.toString()));
+        return new ForecastFragment.Param(postalCode, units);
     }
 
 
