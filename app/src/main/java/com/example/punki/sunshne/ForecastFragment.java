@@ -13,7 +13,11 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
+import com.example.punki.sunshne.model.WeatherModel;
 import com.example.punki.sunshne.openweathermap.OpenWeatherFetchTask;
+import com.example.punki.sunshne.view.ForecastListPresenter;
+import com.example.punki.sunshne.view.Presenter;
+import com.example.punki.sunshne.view.UnitConverterMapper;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -69,10 +73,13 @@ public class ForecastFragment extends Fragment {
     }
 
     private void loadDataFromServer() {
-        OpenWeatherFetchTask fetchWeatherTask = new OpenWeatherFetchTask(weatherAdapter);
         Param ffParam = ((ForecastFragmentParamSupplier) getActivity()).getForecastFragmentParam();
-        double temperatureModifier = ffParam.units == Units.metric ? 1 : 33.8;
-        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 7, temperatureModifier));
+
+        Presenter<WeatherModel> listPresenter =
+                new ForecastListPresenter(weatherAdapter, new UnitConverterMapper(ffParam.units));
+
+        OpenWeatherFetchTask fetchWeatherTask = new OpenWeatherFetchTask(listPresenter);
+        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 7));
     }
 
     @Override

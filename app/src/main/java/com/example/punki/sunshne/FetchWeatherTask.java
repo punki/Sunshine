@@ -3,9 +3,9 @@ package com.example.punki.sunshne;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
 import com.example.punki.sunshne.model.WeatherModel;
+import com.example.punki.sunshne.view.Presenter;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -13,19 +13,15 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
 
 public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer, WeatherModel> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
-    private final ArrayAdapter<String> arrayAdapter;
+    private final Presenter<WeatherModel> presenter;
 
-    protected FetchWeatherTask(ArrayAdapter<String> arrayAdapter) {
-        this.arrayAdapter = arrayAdapter;
+    protected FetchWeatherTask(Presenter<WeatherModel> presenter) {
+        this.presenter = presenter;
     }
 
     @Override
@@ -37,24 +33,7 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
 
     @Override
     protected void onPostExecute(WeatherModel weatherModel) {
-        arrayAdapter.clear();
-        arrayAdapter.addAll(format(weatherModel));
-    }
-
-    private Collection<String> format(WeatherModel weatherModel) {
-        SimpleDateFormat dateFormat = new SimpleDateFormat();
-        Collection<String> forecasts = new ArrayList<String>(weatherModel.days.size());
-        for (WeatherModel.Day day : weatherModel.days) {
-            String forecast = dateFormat.format(day.date) +
-                    " Weather: " + day.weather +
-                    " Temp min: " + day.minTemperature +
-                    " max: " + day.maxTemperature +
-                    " " + weatherModel.country +
-                    ", " + weatherModel.city;
-            forecasts.add(forecast);
-        }
-        return forecasts;
-
+        presenter.display(weatherModel);
     }
 
     protected abstract WeatherModel doInBackgroundSpecific(Params... params);

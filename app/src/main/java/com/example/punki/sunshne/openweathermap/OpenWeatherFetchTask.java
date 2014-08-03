@@ -2,8 +2,8 @@ package com.example.punki.sunshne.openweathermap;
 
 import android.net.Uri;
 import android.util.Log;
-import android.widget.ArrayAdapter;
 
+import com.example.punki.sunshne.view.Presenter;
 import com.example.punki.sunshne.model.WeatherModel;
 import com.example.punki.sunshne.FetchWeatherTask;
 import com.example.punki.sunshne.openweathermap.model.City;
@@ -15,8 +15,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 import java.util.TimeZone;
 
 public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.Param> {
@@ -25,8 +23,8 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
     private final String LOG_TAG = OpenWeatherFetchTask.class.getSimpleName();
     private final Gson gson = new Gson();
 
-    public OpenWeatherFetchTask(ArrayAdapter<String> arrayAdapter) {
-        super(arrayAdapter);
+    public OpenWeatherFetchTask(Presenter<WeatherModel> presenter) {
+        super(presenter);
     }
 
     @Override
@@ -54,8 +52,8 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
             calendar.setTimeInMillis(f.dt * 1000);
             WeatherModel.Day day=new WeatherModel.Day(
                     calendar.getTime(),
-                    f.temp.min*param.temperatureModifier,
-                    f.temp.max*param.temperatureModifier,
+                    f.temp.min,
+                    f.temp.max,
                     f.weather.get(0).main);
             days.add(day);
         }
@@ -78,13 +76,11 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
     public static class Param {
         public final String postcode;
         public final int limit;
-        public final double temperatureModifier;
 
-        public Param(String postcode, int limit, double temperatureModifier) {
+        public Param(String postcode, int limit) {
 
             this.postcode = postcode;
             this.limit = limit;
-            this.temperatureModifier = temperatureModifier;
         }
     }
 }
