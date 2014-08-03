@@ -1,4 +1,4 @@
-package com.example.punki.sunshne;
+package com.example.punki.sunshne.model;
 
 public enum Units {
     metric,

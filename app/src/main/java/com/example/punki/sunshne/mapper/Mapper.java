@@ -1,4 +1,4 @@
-package com.example.punki.sunshne.view;
+package com.example.punki.sunshne.mapper;
 
 
 public interface Mapper<T> {

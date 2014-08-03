@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
+import com.example.punki.sunshne.mapper.Mapper;
 import com.example.punki.sunshne.model.WeatherModel;
 import com.example.punki.sunshne.view.Presenter;
 
@@ -14,7 +15,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer, WeatherModel> {
+public abstract class FetchWeatherTask<Params extends FetchWeatherTask.Param> extends AsyncTask<Params, Integer, WeatherModel> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
@@ -26,8 +27,13 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
 
     @Override
     protected WeatherModel doInBackground(Params... params) {
+        Params param = params[0];
         WeatherModel weatherModel = doInBackgroundSpecific(params);
         Log.v(LOG_TAG, "WeatherModel: " + weatherModel);
+
+        if (param.mapper != null) {
+            return param.mapper.map(weatherModel);
+        }
         return weatherModel;
     }
 
@@ -96,6 +102,14 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
                     Log.e(LOG_TAG, "Error closing stream", e);
                 }
             }
+        }
+    }
+
+    public static abstract class Param {
+        public final Mapper<WeatherModel> mapper;
+
+        public Param(Mapper<WeatherModel> mapper) {
+            this.mapper = mapper;
         }
     }
 }

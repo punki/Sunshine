@@ -11,19 +11,14 @@ import java.util.Collection;
 
 public class ForecastListPresenter implements Presenter<WeatherModel> {
     private final ArrayAdapter<String> arrayAdapter;
-    private final Mapper<WeatherModel> mapper;
 
-    public ForecastListPresenter(ArrayAdapter<String> arrayAdapter,Mapper<WeatherModel> mapper) {
+    public ForecastListPresenter(ArrayAdapter<String> arrayAdapter) {
         this.arrayAdapter = arrayAdapter;
-        this.mapper = mapper;
     }
 
     @Override
     public void display(WeatherModel weatherModel) {
         arrayAdapter.clear();
-        if (mapper != null) {
-            weatherModel = mapper.map(weatherModel);
-        }
         if (weatherModel != null) {
             arrayAdapter.addAll(format(weatherModel));
         }

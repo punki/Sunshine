@@ -1,6 +1,6 @@
-package com.example.punki.sunshne.view;
+package com.example.punki.sunshne.mapper;
 
-import com.example.punki.sunshne.Units;
+import com.example.punki.sunshne.model.Units;
 import com.example.punki.sunshne.model.WeatherModel;
 
 import java.util.ArrayList;

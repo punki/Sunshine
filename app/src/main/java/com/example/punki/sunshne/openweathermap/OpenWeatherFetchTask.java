@@ -3,6 +3,7 @@ package com.example.punki.sunshne.openweathermap;
 import android.net.Uri;
 import android.util.Log;
 
+import com.example.punki.sunshne.mapper.Mapper;
 import com.example.punki.sunshne.view.Presenter;
 import com.example.punki.sunshne.model.WeatherModel;
 import com.example.punki.sunshne.FetchWeatherTask;
@@ -73,12 +74,12 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
                 .appendQueryParameter("units", "metric").build();
     }
 
-    public static class Param {
+    public static class Param extends FetchWeatherTask.Param{
         public final String postcode;
         public final int limit;
 
-        public Param(String postcode, int limit) {
-
+        public Param(String postcode, int limit,Mapper<WeatherModel> mapper) {
+            super(mapper);
             this.postcode = postcode;
             this.limit = limit;
         }
