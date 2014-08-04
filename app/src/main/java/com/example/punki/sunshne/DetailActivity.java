@@ -100,10 +100,11 @@ public class DetailActivity extends Activity {
         }
 
         private void share(MenuItem item) {
-            ShareActionProvider shareActionProvider
-                    = (ShareActionProvider) item.getActionProvider();
-            shareActionProvider.setShareIntent(createShareIntent());
-
+            if (item != null) {
+                ShareActionProvider shareActionProvider
+                        = (ShareActionProvider) item.getActionProvider();
+                shareActionProvider.setShareIntent(createShareIntent());
+            }
         }
 
         private Intent createShareIntent() {
