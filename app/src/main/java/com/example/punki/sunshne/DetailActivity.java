@@ -3,13 +3,16 @@ package com.example.punki.sunshne;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ShareActionProvider;
 import android.widget.TextView;
 
 public class DetailActivity extends Activity {
@@ -43,7 +46,7 @@ public class DetailActivity extends Activity {
         DetailFragment detailFragment =
                 (DetailFragment) getFragmentManager().findFragmentByTag(DETAIL_FRAGMENT);
         if (detailFragment == null) {
-            detailFragment = startDetailFragment();
+            startDetailFragment();
         }
     }
 
@@ -68,7 +71,13 @@ public class DetailActivity extends Activity {
         return super.onOptionsItemSelected(item);
     }
 
+
     public static class DetailFragment extends Fragment {
+
+
+        public DetailFragment() {
+            setHasOptionsMenu(true);
+        }
 
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -79,11 +88,40 @@ public class DetailActivity extends Activity {
         }
 
         private void processIntent(View rootView) {
+            String text = getTextFromIntent();
+            TextView textView = (TextView) rootView.findViewById(R.id.detail_text);
+            textView.setText(text);
+        }
+
+        @Override
+        public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+            inflater.inflate(R.menu.detailfragment, menu);
+            share(menu.findItem(R.id.action_share));
+        }
+
+        private void share(MenuItem item) {
+            ShareActionProvider shareActionProvider
+                    = (ShareActionProvider) item.getActionProvider();
+            shareActionProvider.setShareIntent(createShareIntent());
+
+        }
+
+        private Intent createShareIntent() {
+            String shareData = getTextFromIntent() + " #SunshineApp";
+            Intent shareIntent = new Intent(Intent.ACTION_SEND);
+            shareIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET);
+            shareIntent.setType("text/plain");
+            shareIntent.putExtra(Intent.EXTRA_TEXT, shareData);
+            return shareIntent;
+        }
+
+        public String getTextFromIntent() {
             Intent intent = getActivity().getIntent();
             if (intent != null && intent.hasExtra(Intent.EXTRA_TEXT)) {
-                TextView textView = (TextView) rootView.findViewById(R.id.detail_text);
-                textView.setText(intent.getStringExtra(Intent.EXTRA_TEXT));
+                return intent.getStringExtra(Intent.EXTRA_TEXT);
             }
+            return "";
         }
+
     }
 }
