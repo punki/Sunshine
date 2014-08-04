@@ -3,6 +3,7 @@ package com.example.punki.sunshne;
 import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
 import android.view.Menu;
@@ -43,17 +44,38 @@ public class MainActivity extends Activity implements ForecastFragment.ForecastF
             startActivity(settingsIntent);
             return true;
         }
+        if (id == R.id.action_view_location) {
+            Intent intent = new Intent(Intent.ACTION_VIEW);
+
+            Uri geoUri = Uri.parse("geo:0,0").buildUpon()
+                    .appendQueryParameter("q", getLocation())
+                    .build();
+            intent.setData(geoUri);
+            if (intent.resolveActivity(getPackageManager()) != null) {
+                startActivity(intent);
+            }
+            return true;
+        }
         return super.onOptionsItemSelected(item);
     }
 
     @Override
     public ForecastFragment.Param getForecastFragmentParam() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        String postalCode = sharedPreferences.getString(getString(R.string.pref_location_key),
-                "61255");
-        Units units = Units.valueOf(sharedPreferences.getString(getString(R.string.pref_unit_key),
-                Units.metric.toString()));
+        String postalCode = getLocation();
+        Units units = getUnits();
         return new ForecastFragment.Param(postalCode, units);
+    }
+
+    private Units getUnits() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return Units.valueOf(sharedPreferences.getString(getString(R.string.pref_unit_key),
+                    getString(R.string.pref_unit_default)));
+    }
+
+    private String getLocation() {
+        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
+        return sharedPreferences.getString(getString(R.string.pref_location_key),
+                    getString(R.string.pref_location_default));
     }
 
 
