@@ -15,7 +15,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public abstract class FetchWeatherTask<Params extends FetchWeatherTask.Param> extends AsyncTask<Params, Integer, WeatherModel> {
+public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer, WeatherModel> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
@@ -31,9 +31,6 @@ public abstract class FetchWeatherTask<Params extends FetchWeatherTask.Param> ex
         WeatherModel weatherModel = doInBackgroundSpecific(params);
         Log.v(LOG_TAG, "WeatherModel: " + weatherModel);
 
-        if (param.mapper != null) {
-            return param.mapper.map(weatherModel);
-        }
         return weatherModel;
     }
 
@@ -105,11 +102,4 @@ public abstract class FetchWeatherTask<Params extends FetchWeatherTask.Param> ex
         }
     }
 
-    public static abstract class Param {
-        public final Mapper<WeatherModel> mapper;
-
-        public Param(Mapper<WeatherModel> mapper) {
-            this.mapper = mapper;
-        }
-    }
 }

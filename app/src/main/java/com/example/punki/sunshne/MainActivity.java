@@ -4,8 +4,10 @@ import android.app.Activity;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
+import android.nfc.Tag;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -14,9 +16,12 @@ import com.example.punki.sunshne.model.Units;
 
 public class MainActivity extends Activity implements ForecastFragment.ForecastFragmentParamSupplier {
 
+    private final String LOG_TAG = MainActivity.class.getSimpleName();
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.v(LOG_TAG, "onCreate");
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getFragmentManager().beginTransaction()
@@ -69,7 +74,7 @@ public class MainActivity extends Activity implements ForecastFragment.ForecastF
     private Units getUnits() {
         SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
         return Units.valueOf(sharedPreferences.getString(getString(R.string.pref_unit_key),
-                    getString(R.string.pref_unit_default)));
+                getString(R.string.pref_unit_default)));
     }
 
     private String getLocation() {
@@ -78,5 +83,33 @@ public class MainActivity extends Activity implements ForecastFragment.ForecastF
                     getString(R.string.pref_location_default));
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Log.v(LOG_TAG, "onPause");
+    }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v(LOG_TAG, "onResume");
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v(LOG_TAG, "onStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Log.v(LOG_TAG, "onStop");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.v(LOG_TAG, "onDestroy");
+    }
 }

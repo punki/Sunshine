@@ -74,12 +74,11 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
                 .appendQueryParameter("units", "metric").build();
     }
 
-    public static class Param extends FetchWeatherTask.Param{
+    public static class Param{
         public final String postcode;
         public final int limit;
 
-        public Param(String postcode, int limit,Mapper<WeatherModel> mapper) {
-            super(mapper);
+        public Param(String postcode, int limit) {
             this.postcode = postcode;
             this.limit = limit;
         }

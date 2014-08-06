@@ -2,6 +2,8 @@ package com.example.punki.sunshne.view;
 
 import android.widget.ArrayAdapter;
 
+import com.example.punki.sunshne.mapper.Mapper;
+import com.example.punki.sunshne.mapper.UnitConverterMapper;
 import com.example.punki.sunshne.model.WeatherModel;
 
 import java.text.DecimalFormat;
@@ -11,16 +13,18 @@ import java.util.Collection;
 
 public class ForecastListPresenter implements Presenter<WeatherModel> {
     private final ArrayAdapter<String> arrayAdapter;
+    private Mapper<WeatherModel> mapper;
 
-    public ForecastListPresenter(ArrayAdapter<String> arrayAdapter) {
+    public ForecastListPresenter(ArrayAdapter<String> arrayAdapter, Mapper<WeatherModel> mapper) {
         this.arrayAdapter = arrayAdapter;
+        this.mapper = mapper;
     }
 
     @Override
     public void display(WeatherModel weatherModel) {
         arrayAdapter.clear();
         if (weatherModel != null) {
-            arrayAdapter.addAll(format(weatherModel));
+            arrayAdapter.addAll(format(mapper.map(weatherModel)));
         }
     }
 

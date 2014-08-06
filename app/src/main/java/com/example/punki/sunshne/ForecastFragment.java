@@ -76,10 +76,10 @@ public class ForecastFragment extends Fragment {
     private void loadDataFromServer() {
         Param ffParam = ((ForecastFragmentParamSupplier) getActivity()).getForecastFragmentParam();
 
+        UnitConverterMapper unitConverterMapper = new UnitConverterMapper(ffParam.units);
         FetchWeatherTask<OpenWeatherFetchTask.Param> fetchWeatherTask
-                = new OpenWeatherFetchTask(new ForecastListPresenter(weatherAdapter));
-        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(
-                ffParam.location, 7, new UnitConverterMapper(ffParam.units)));
+                = new OpenWeatherFetchTask(new ForecastListPresenter(weatherAdapter,unitConverterMapper));
+        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 7));
     }
 
     @Override
