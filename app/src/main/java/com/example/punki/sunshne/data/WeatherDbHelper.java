@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.punki.sunshne.db;
+package com.example.punki.sunshne.data;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.example.punki.sunshne.db.model.WeatherContract.*;
+import static com.example.punki.sunshne.data.WeatherContract.*;
 
 /**
  * Manages a local database for weather data.
@@ -39,8 +39,6 @@ public class WeatherDbHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase sqLiteDatabase) {
         // Create a table to hold locations.  A location consists of the string supplied in the
         // location setting, the city name, and the latitude and longitude
-
-        // TBD
 
         String locationCreateSql = buildLocationCreateSql();
         String weatherCreateSql = buildWeatherCreateSql();
