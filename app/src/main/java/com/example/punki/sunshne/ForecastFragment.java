@@ -13,11 +13,9 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import com.example.punki.sunshne.model.Units;
-import com.example.punki.sunshne.model.WeatherModel;
+import com.example.punki.sunshne.domain.Units;
 import com.example.punki.sunshne.openweathermap.OpenWeatherFetchTask;
 import com.example.punki.sunshne.view.ForecastListPresenter;
-import com.example.punki.sunshne.view.Presenter;
 import com.example.punki.sunshne.mapper.UnitConverterMapper;
 
 /**

@@ -3,9 +3,8 @@ package com.example.punki.sunshne.openweathermap;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.punki.sunshne.mapper.Mapper;
 import com.example.punki.sunshne.view.Presenter;
-import com.example.punki.sunshne.model.WeatherModel;
+import com.example.punki.sunshne.domain.WeatherModel;
 import com.example.punki.sunshne.FetchWeatherTask;
 import com.example.punki.sunshne.openweathermap.model.City;
 import com.example.punki.sunshne.openweathermap.model.Forecast;

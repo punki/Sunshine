@@ -4,8 +4,7 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
-import com.example.punki.sunshne.mapper.Mapper;
-import com.example.punki.sunshne.model.WeatherModel;
+import com.example.punki.sunshne.domain.WeatherModel;
 import com.example.punki.sunshne.view.Presenter;
 
 import java.io.BufferedReader;

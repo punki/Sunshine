@@ -1,7 +1,7 @@
 package com.example.punki.sunshne.mapper;
 
-import com.example.punki.sunshne.model.Units;
-import com.example.punki.sunshne.model.WeatherModel;
+import com.example.punki.sunshne.domain.Units;
+import com.example.punki.sunshne.domain.WeatherModel;
 
 import java.util.ArrayList;
 import java.util.Collection;

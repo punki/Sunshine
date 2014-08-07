@@ -1,4 +1,4 @@
-package com.example.punki.sunshne.model;
+package com.example.punki.sunshne.domain;
 
 import java.util.ArrayList;
 import java.util.Collection;
