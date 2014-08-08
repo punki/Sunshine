@@ -18,6 +18,8 @@ import java.util.Set;
 public class TestDb extends AndroidTestCase {
 
     public static final String LOG_TAG = TestDb.class.getSimpleName();
+    public static final String LOCATION = "99705";
+    public static final String WEATHER_DATE = "20141205";
 
     public void testCreateDb() throws Throwable {
         mContext.deleteDatabase(WeatherDbHelper.DATABASE_NAME);
@@ -57,7 +59,7 @@ public class TestDb extends AndroidTestCase {
                 null // sort order
         );
 
-        validateCursorAgainstContentValues(cursor, testValues);
+        validateCursor(cursor, testValues);
 
         // Fantastic.  Now that we have a location, add some weather!
         ContentValues weatherValues = createWeatherValues(locationRowId);
@@ -76,7 +78,7 @@ public class TestDb extends AndroidTestCase {
                 null  // sort order
         );
 
-        validateCursorAgainstContentValues(weatherCursor, weatherValues);
+        validateCursor(weatherCursor, weatherValues);
 
         dbHelper.close();
     }
@@ -84,7 +86,7 @@ public class TestDb extends AndroidTestCase {
     static ContentValues createWeatherValues(long locationRowId) {
         ContentValues weatherValues = new ContentValues();
         weatherValues.put(WeatherEntry.COLUMN_LOC_KEY, locationRowId);
-        weatherValues.put(WeatherEntry.COLUMN_DATETEXT, "20141205");
+        weatherValues.put(WeatherEntry.COLUMN_DATETEXT, WEATHER_DATE);
         weatherValues.put(WeatherEntry.COLUMN_DEGREES, 1.1);
         weatherValues.put(WeatherEntry.COLUMN_HUMIDITY, 1.2);
         weatherValues.put(WeatherEntry.COLUMN_PRESSURE, 1.3);
@@ -100,7 +102,7 @@ public class TestDb extends AndroidTestCase {
     static ContentValues createNorthPoleLocationValues() {
         // Create a new map of values, where column names are the keys
         ContentValues testValues = new ContentValues();
-        testValues.put(LocationEntry.COLUMN_LOCATION_SETTING, "99705");
+        testValues.put(LocationEntry.COLUMN_LOCATION_SETTING, LOCATION);
         testValues.put(LocationEntry.COLUMN_CITY_NAME, "North Pole");
         testValues.put(LocationEntry.COLUMN_COORD_LAT, 64.7488);
         testValues.put(LocationEntry.COLUMN_COORD_LONG, -147.353);
@@ -108,7 +110,7 @@ public class TestDb extends AndroidTestCase {
         return testValues;
     }
 
-    static void validateCursorAgainstContentValues(
+    static void validateCursor(
             Cursor valueCursor, ContentValues expectedValues) {
 
         // If possible, move to the first row of the query results.
@@ -126,11 +128,18 @@ public class TestDb extends AndroidTestCase {
     // The target api annotation is needed for the call to keySet -- we wouldn't want
     // to use this in our app, but in a test it's fine to assume a higher target.
     @TargetApi(Build.VERSION_CODES.HONEYCOMB)
-    static void validateContentValues(ContentValues output, ContentValues input) {
-        Set<String> inputKeys = input.keySet();
+    static void validateContentValues(ContentValues actual, ContentValues expected) {
+        Set<String> inputKeys = expected.keySet();
         for (String key : inputKeys) {
-            assertTrue(output.containsKey(key));
-            assertTrue(output.getAsString(key).equals(input.getAsString(key)));
+            assertTrue(actual.containsKey(key));
+            assertTrue(actual.getAsString(key).equals(expected.getAsString(key)));
         }
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
+    static ContentValues addAllContentValues(ContentValues first, ContentValues second) {
+        ContentValues contentValues=new ContentValues(first);
+        contentValues.putAll(second);
+        return contentValues;
     }
 }

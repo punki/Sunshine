@@ -124,8 +124,7 @@ public class WeatherContract {
             return ContentUris.withAppendedId(CONTENT_URI, id);
         }
         public static long getLocationIdFromUri(Uri uri) {
-            String id = uri.getPathSegments().get(1);
-            return Long.valueOf(id);
+            return ContentUris.parseId(uri);
         }
     }
 }
