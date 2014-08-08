@@ -37,6 +37,10 @@
                 android:value="com.example.punki.sunshne.MainActivity" />
         </activity>
 
+        <provider
+            android:authorities="com.example.punki.sunshne"
+            android:name=".data.WeatherProvider"/>
+
 
     </application>
 </manifest>

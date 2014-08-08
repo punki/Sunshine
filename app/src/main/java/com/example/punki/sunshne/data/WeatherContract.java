@@ -18,6 +18,7 @@ package com.example.punki.sunshne.data;
 import android.content.ContentUris;
 import android.net.Uri;
 import android.provider.BaseColumns;
+import android.renderscript.Long3;
 
 /**
  * Defines table and column names for the weather database.
@@ -121,6 +122,10 @@ public class WeatherContract {
 
         public static Uri buildLocationUri(long id) {
             return ContentUris.withAppendedId(CONTENT_URI, id);
+        }
+        public static long getLocationIdFromUri(Uri uri) {
+            String id = uri.getPathSegments().get(1);
+            return Long.valueOf(id);
         }
     }
 }
