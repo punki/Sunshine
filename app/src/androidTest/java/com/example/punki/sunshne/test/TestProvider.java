@@ -1,14 +1,15 @@
 package com.example.punki.sunshne.test;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
+import com.example.punki.sunshne.data.WeatherContract;
 import com.example.punki.sunshne.data.WeatherDbHelper;
-
-import junit.framework.Test;
 
 import static com.example.punki.sunshne.data.WeatherContract.LocationEntry;
 import static com.example.punki.sunshne.data.WeatherContract.WeatherEntry;
@@ -83,12 +84,25 @@ public class TestProvider extends AndroidTestCase {
         ContentValues expectedWeatherAddLocationValues = TestDb.addAllContentValues(
                 expectedWeatherValues, TestDb.createNorthPoleLocationValues());
         testSelectByLocation(expectedWeatherAddLocationValues);
+        testSelectByLocationAndStartDate(expectedWeatherAddLocationValues);
         testSelectByLocationAndDate(expectedWeatherAddLocationValues);
+    }
+
+    private void testSelectByLocationAndStartDate(ContentValues expectedWeatherValues) {
+        Cursor weatherCursor = mContext.getContentResolver().query(
+                WeatherEntry.buildWeatherLocationWithStartDate(TestDb.LOCATION, TestDb.WEATHER_DATE),
+                null, // leaving "columns" null just returns all the columns.
+                null, // cols for "where" clause
+                null, // values for "where" clause
+                null // columns to group by
+        );
+
+        TestDb.validateCursor(weatherCursor, expectedWeatherValues);
     }
 
     private void testSelectByLocationAndDate(ContentValues expectedWeatherValues) {
         Cursor weatherCursor = mContext.getContentResolver().query(
-                WeatherEntry.buildWeatherLocationWithStartDate(TestDb.LOCATION, TestDb.WEATHER_DATE),
+                WeatherEntry.buildWeatherLocationWithDate(TestDb.LOCATION, TestDb.WEATHER_DATE),
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
                 null, // values for "where" clause
@@ -137,7 +151,8 @@ public class TestProvider extends AndroidTestCase {
     }
 
     private void testInsertWeather(SQLiteDatabase db, ContentValues weatherValues) {
-        long weatherRowId = db.insert(WeatherEntry.TABLE_NAME, null, weatherValues);
+        Uri insertUri = mContext.getContentResolver().insert(WeatherEntry.CONTENT_URI, weatherValues);
+        long weatherRowId = ContentUris.parseId(insertUri);
         assertTrue(weatherRowId != -1);
     }
 
@@ -154,10 +169,8 @@ public class TestProvider extends AndroidTestCase {
     }
 
     private long testInsertLocation(SQLiteDatabase db, ContentValues testValues) {
-        long locationRowId;
-        locationRowId = db.insert(LocationEntry.TABLE_NAME, null, testValues);
-
-        // Verify we got a row back.
+        Uri insertUri = mContext.getContentResolver().insert(LocationEntry.CONTENT_URI, testValues);
+        long locationRowId = ContentUris.parseId(insertUri);
         assertTrue(locationRowId != -1);
         Log.d(LOG_TAG, "New row id: " + locationRowId);
         return locationRowId;

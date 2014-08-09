@@ -4,6 +4,7 @@ import android.content.ContentProvider;
 import android.content.ContentValues;
 import android.content.UriMatcher;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
 
@@ -35,6 +36,10 @@ public class WeatherProvider extends ContentProvider{
             WeatherContract.LocationEntry.TABLE_NAME+
                     "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
                     WeatherContract.WeatherEntry.COLUMN_DATETEXT + " >= ? ";
+    private static final String sLocationSettingWithDateSelection =
+            WeatherContract.LocationEntry.TABLE_NAME+
+                    "." + WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ? AND " +
+                    WeatherContract.WeatherEntry.COLUMN_DATETEXT + " = ? ";
 
     private final UriMatcher uriMatcher = buildUriMatcher();
 
@@ -56,12 +61,12 @@ public class WeatherProvider extends ContentProvider{
             // "weather/*/*"
             case WEATHER_WITH_LOCATION_AND_DATE:
             {
-                retCursor = null;
+                retCursor = getWeatherByLocationAndDateSetting(uri, projection, sortOrder);
                 break;
             }
             // "weather/*"
             case WEATHER_WITH_LOCATION: {
-                retCursor = getWeatherByLocationSetting(uri, projection, selection);
+                retCursor = getWeatherByLocationSetting(uri, projection, sortOrder);
                 break;
             }
             // "weather"
@@ -114,6 +119,23 @@ public class WeatherProvider extends ContentProvider{
         return retCursor;
     }
 
+    private Cursor getWeatherByLocationAndDateSetting(Uri uri, String[] projection, String sortOrder) {
+        String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
+        String dateSetting = WeatherContract.WeatherEntry.getDateFromUri(uri);
+
+        String[] selectionArgs = new String[]{locationSetting, dateSetting};
+        String selection = sLocationSettingWithDateSelection;
+        return sWeatherByLocationSettingQueryBuilder.query(openHelper.getReadableDatabase(),
+                projection,
+                selection,
+                selectionArgs,
+                null,
+                null,
+                sortOrder
+        );
+
+    }
+
     private Cursor getWeatherByLocationSetting(Uri uri, String[] projection, String sortOrder) {
         String locationSetting = WeatherContract.WeatherEntry.getLocationSettingFromUri(uri);
         String startDate = WeatherContract.WeatherEntry.getStartDateFromUri(uri);
@@ -160,7 +182,31 @@ public class WeatherProvider extends ContentProvider{
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
-        return null;
+        final SQLiteDatabase db = openHelper.getWritableDatabase();
+        final int match = uriMatcher.match(uri);
+        Uri returnUri;
+
+        switch (match) {
+            case WEATHER: {
+                long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, values);
+                if ( _id > 0 )
+                    returnUri = WeatherContract.WeatherEntry.buildWeatherUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            case LOCATION: {
+                long _id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
+                if ( _id > 0 )
+                    returnUri = WeatherContract.LocationEntry.buildLocationUri(_id);
+                else
+                    throw new android.database.SQLException("Failed to insert row into " + uri);
+                break;
+            }
+            default:
+                throw new UnsupportedOperationException("Unknown uri: " + uri);
+        }
+        return returnUri;
     }
 
     @Override
