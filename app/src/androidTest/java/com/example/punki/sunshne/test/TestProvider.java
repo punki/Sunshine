@@ -7,6 +7,7 @@ import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
+import com.example.punki.sunshne.data.WeatherContract;
 import com.example.punki.sunshne.data.WeatherDbHelper;
 
 import static com.example.punki.sunshne.data.WeatherContract.LocationEntry;
@@ -64,7 +65,49 @@ public class TestProvider extends AndroidTestCase {
         long locationRowId = testInsertLocation(expectedLocationValues);
         testSelectAllFromLocation(expectedLocationValues);
         testSelectByIdFromLocation(locationRowId, expectedLocationValues);
+        testUpdateLocation(locationRowId, expectedLocationValues);
+        testDeleteLocation(locationRowId);
+
+        //revert delete
+        locationRowId = testInsertLocation(expectedLocationValues);
         return locationRowId;
+    }
+
+    private void testDeleteLocation(long locationRowId) {
+        int numberOfDeleted = mContext.getContentResolver().delete(
+                LocationEntry.CONTENT_URI,
+                LocationEntry._ID + " = ?",
+                new String[]{String.valueOf(locationRowId)});
+        assertEquals(1, numberOfDeleted);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                LocationEntry.buildLocationUri(locationRowId),
+                null,
+                null, // Columns for the "where" clause
+                null, // Values for the "where" clause
+                null // sort order
+        );
+        assertFalse(cursor.moveToNext());
+    }
+
+    private void testUpdateLocation(long locationRowId, ContentValues expectedLocationValues) {
+        ContentValues updValue = new ContentValues(expectedLocationValues);
+        updValue.put(LocationEntry._ID,locationRowId);
+        updValue.put(LocationEntry.COLUMN_CITY_NAME,"upd city name");
+        int numberOfUpdated = mContext.getContentResolver().update(
+                LocationEntry.CONTENT_URI,
+                updValue, LocationEntry._ID + " = ? ",
+                new String[]{String.valueOf(locationRowId)});
+        assertEquals(1, numberOfUpdated);
+
+        Cursor cursor = mContext.getContentResolver().query(
+                LocationEntry.buildLocationUri(locationRowId),
+                null,
+                null, // Columns for the "where" clause
+                null, // Values for the "where" clause
+                null // sort order
+        );
+        TestDb.validateCursor(cursor, updValue);
     }
 
     private void testWeatherCRUD(long locationRowId) {
