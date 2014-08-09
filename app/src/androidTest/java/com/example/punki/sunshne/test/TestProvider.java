@@ -3,12 +3,10 @@ package com.example.punki.sunshne.test;
 import android.content.ContentUris;
 import android.content.ContentValues;
 import android.database.Cursor;
-import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.example.punki.sunshne.data.WeatherContract;
 import com.example.punki.sunshne.data.WeatherDbHelper;
 
 import static com.example.punki.sunshne.data.WeatherContract.LocationEntry;
@@ -54,32 +52,24 @@ public class TestProvider extends AndroidTestCase {
     }
 
     public void testInsertReadProvider() {
-
-        // If there's an error in those massive SQL table creation Strings,
-        // errors will be thrown here when you try to get a writable database.
-        WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
-        SQLiteDatabase db = dbHelper.getWritableDatabase();
-
         //location
-        long locationRowId = testLocationCRUD(db);
+        long locationRowId = testLocationCRUD();
 
         //weather
-        testWeatherCRUD(db, locationRowId);
-
-        dbHelper.close();
+        testWeatherCRUD(locationRowId);
     }
 
-    private long testLocationCRUD(SQLiteDatabase db) {
+    private long testLocationCRUD() {
         ContentValues expectedLocationValues = TestDb.createNorthPoleLocationValues();
-        long locationRowId = testInsertLocation(db, expectedLocationValues);
+        long locationRowId = testInsertLocation(expectedLocationValues);
         testSelectAllFromLocation(expectedLocationValues);
         testSelectByIdFromLocation(locationRowId, expectedLocationValues);
         return locationRowId;
     }
 
-    private void testWeatherCRUD(SQLiteDatabase db, long locationRowId) {
+    private void testWeatherCRUD(long locationRowId) {
         ContentValues expectedWeatherValues = TestDb.createWeatherValues(locationRowId);
-        testInsertWeather(db, expectedWeatherValues);
+        testInsertWeather(expectedWeatherValues);
         testSelectAllFromWeather(expectedWeatherValues);
         ContentValues expectedWeatherAddLocationValues = TestDb.addAllContentValues(
                 expectedWeatherValues, TestDb.createNorthPoleLocationValues());
@@ -150,7 +140,7 @@ public class TestProvider extends AndroidTestCase {
         TestDb.validateCursor(weatherCursor, expectedWeatherValues);
     }
 
-    private void testInsertWeather(SQLiteDatabase db, ContentValues weatherValues) {
+    private void testInsertWeather(ContentValues weatherValues) {
         Uri insertUri = mContext.getContentResolver().insert(WeatherEntry.CONTENT_URI, weatherValues);
         long weatherRowId = ContentUris.parseId(insertUri);
         assertTrue(weatherRowId != -1);
@@ -168,7 +158,7 @@ public class TestProvider extends AndroidTestCase {
         TestDb.validateCursor(cursor, locationValues);
     }
 
-    private long testInsertLocation(SQLiteDatabase db, ContentValues testValues) {
+    private long testInsertLocation(ContentValues testValues) {
         Uri insertUri = mContext.getContentResolver().insert(LocationEntry.CONTENT_URI, testValues);
         long locationRowId = ContentUris.parseId(insertUri);
         assertTrue(locationRowId != -1);
