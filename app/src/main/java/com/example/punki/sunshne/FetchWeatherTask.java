@@ -49,7 +49,7 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
 
     private Uri addLocation(WeatherModel weatherModel) {
         Object[] uniqueQuery = WeatherContract.uniqueQuery(weatherModel);
-        Cursor cursor = contentResolver.query(LocationEntry.CONTENT_URI, null, (String) uniqueQuery[0], (String[]) uniqueQuery[1], null);
+        Cursor cursor = contentResolver.query(LocationEntry.CONTENT_URI, new String[]{LocationEntry._ID}, (String) uniqueQuery[0], (String[]) uniqueQuery[1], null);
         if (!cursor.moveToNext()) {
             Log.v(LOG_TAG, " there is no location, adding new");
             return contentResolver.insert(LocationEntry.CONTENT_URI, mapToLocationContract(weatherModel));
