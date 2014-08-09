@@ -10,10 +10,10 @@ public class WeatherModel {
     public final String locationSetting;
     public final Collection<Day> days;
 
-    public WeatherModel(String country, String city, Collection<Day> days) {
+    public WeatherModel(String country, String city,String locationSetting, Collection<Day> days) {
         this.country = country;
         this.city = city;
-        locationSetting = "todo";
+        this.locationSetting = locationSetting;
         this.days = new ArrayList<Day>(days);
     }
 

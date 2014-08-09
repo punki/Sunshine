@@ -36,7 +36,7 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
         String json = readJson(uri);
         Log.i(LOG_TAG, "FetchWeatherTask result: "+json);
         if (json == null) {
-            return new WeatherModel("Error","", Collections.<WeatherModel.Day>emptyList());
+            return new WeatherModel("Error","","", Collections.<WeatherModel.Day>emptyList());
         }
 
         OpenWeatherResponse openWeatherResponse = gson.fromJson(json, OpenWeatherResponse.class);
@@ -60,7 +60,7 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
         }
 
         City city = response.city;
-        return new WeatherModel(city.country, city.name, days);
+        return new WeatherModel(city.country, city.name,param.postcode, days);
     }
 
     private Uri buildUri(Param param) {

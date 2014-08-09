@@ -18,7 +18,7 @@ public class UnitConverterMapper implements Mapper<WeatherModel> {
     @Override
     public WeatherModel map(WeatherModel data) {
         if (data != null) {
-            return new WeatherModel(data.country,data.city,map(data.days));
+            return new WeatherModel(data.country,data.city,data.locationSetting,map(data.days));
         }
         return null;
     }
