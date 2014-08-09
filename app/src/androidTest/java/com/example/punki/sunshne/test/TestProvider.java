@@ -7,10 +7,10 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.test.AndroidTestCase;
 
-import com.example.punki.sunshne.data.WeatherDbHelper;
+import com.example.punki.sunshne.storage.sqllite.WeatherDbHelper;
 
-import static com.example.punki.sunshne.data.WeatherContract.LocationEntry;
-import static com.example.punki.sunshne.data.WeatherContract.WeatherEntry;
+import static com.example.punki.sunshne.storage.WeatherContract.LocationEntry;
+import static com.example.punki.sunshne.storage.WeatherContract.WeatherEntry;
 
 public class TestProvider extends AndroidTestCase {
 

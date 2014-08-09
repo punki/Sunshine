@@ -9,9 +9,9 @@ import android.os.Build;
 import android.test.AndroidTestCase;
 import android.util.Log;
 
-import com.example.punki.sunshne.data.WeatherDbHelper;
+import com.example.punki.sunshne.storage.sqllite.WeatherDbHelper;
 
-import static com.example.punki.sunshne.data.WeatherContract.*;
+import static com.example.punki.sunshne.storage.WeatherContract.*;
 
 import java.util.Set;
 

@@ -1,10 +1,13 @@
 package com.example.punki.sunshne;
 
+import android.content.ContentResolver;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.util.Log;
 
 import com.example.punki.sunshne.domain.WeatherModel;
+import com.example.punki.sunshne.storage.WeatherContract;
 import com.example.punki.sunshne.view.Presenter;
 
 import java.io.BufferedReader;
@@ -14,14 +17,18 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import static com.example.punki.sunshne.storage.WeatherContract.*;
+
 public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer, WeatherModel> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     private final Presenter<WeatherModel> presenter;
+    private final ContentResolver contentResolver;
 
-    protected FetchWeatherTask(Presenter<WeatherModel> presenter) {
+    protected FetchWeatherTask(Presenter<WeatherModel> presenter, ContentResolver contentResolver) {
         this.presenter = presenter;
+        this.contentResolver = contentResolver;
     }
 
     @Override
@@ -29,9 +36,29 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
         Params param = params[0];
         WeatherModel weatherModel = doInBackgroundSpecific(params);
         Log.v(LOG_TAG, "WeatherModel: " + weatherModel);
-
+        save(weatherModel);
         return weatherModel;
     }
+
+    private int save(WeatherModel weatherModel) {
+        Uri locationUri =   addLocation(weatherModel);
+        return contentResolver.bulkInsert(
+                WeatherEntry.CONTENT_URI,
+                mapToWeatherContract(locationUri, weatherModel));
+    }
+
+    private Uri addLocation(WeatherModel weatherModel) {
+        Object[] uniqueQuery = WeatherContract.uniqueQuery(weatherModel);
+        Cursor cursor = contentResolver.query(LocationEntry.CONTENT_URI, null, (String) uniqueQuery[0], (String[]) uniqueQuery[1], null);
+        if (!cursor.moveToNext()) {
+            Log.v(LOG_TAG, " there is no location, adding new");
+            return contentResolver.insert(LocationEntry.CONTENT_URI, mapToLocationContract(weatherModel));
+        }else {
+            Log.v(LOG_TAG, " there was location, skipping insert");
+            return WeatherContract.LocationEntry.buildLocationUri(cursor.getLong(0));
+        }
+    }
+
 
     @Override
     protected void onPostExecute(WeatherModel weatherModel) {

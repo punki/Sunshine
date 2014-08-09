@@ -75,8 +75,10 @@ public class ForecastFragment extends Fragment {
         Param ffParam = ((ForecastFragmentParamSupplier) getActivity()).getForecastFragmentParam();
 
         UnitConverterMapper unitConverterMapper = new UnitConverterMapper(ffParam.units);
-        FetchWeatherTask<OpenWeatherFetchTask.Param> fetchWeatherTask
-                = new OpenWeatherFetchTask(new ForecastListPresenter(weatherAdapter,unitConverterMapper));
+        FetchWeatherTask<OpenWeatherFetchTask.Param> fetchWeatherTask = new OpenWeatherFetchTask(
+                new ForecastListPresenter(weatherAdapter,unitConverterMapper),
+                getActivity().getContentResolver());
+
         fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 7));
     }
 

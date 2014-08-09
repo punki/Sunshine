@@ -1,4 +1,4 @@
-package com.example.punki.sunshne.data;
+package com.example.punki.sunshne.storage;
 
 import android.content.ContentProvider;
 import android.content.ContentValues;
@@ -7,9 +7,14 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteQueryBuilder;
 import android.net.Uri;
+import android.util.Log;
+
+import com.example.punki.sunshne.storage.sqllite.WeatherDbHelper;
+
+import java.util.Arrays;
 
 public class WeatherProvider extends ContentProvider {
-
+    private final String LOG_TAG = WeatherProvider.class.getSimpleName();
     private static final int WEATHER = 100;
     private static final int WEATHER_WITH_LOCATION = 101;
     private static final int WEATHER_WITH_LOCATION_AND_DATE = 102;
@@ -182,6 +187,7 @@ public class WeatherProvider extends ContentProvider {
 
     @Override
     public Uri insert(Uri uri, ContentValues values) {
+        Log.v(LOG_TAG, "insert: " + values);
         final SQLiteDatabase db = openHelper.getWritableDatabase();
         final int match = uriMatcher.match(uri);
         Uri returnUri;
@@ -272,5 +278,32 @@ public class WeatherProvider extends ContentProvider {
         uriMatcher.addURI(authority, WeatherContract.PATH_LOCATION + "/#", LOCATION_ID);
 
         return uriMatcher;
+    }
+
+    @Override
+    public int bulkInsert(Uri uri, ContentValues[] values) {
+        Log.v(LOG_TAG, "bulk insert: " + Arrays.toString(values));
+        final SQLiteDatabase db = openHelper.getWritableDatabase();
+        final int match = uriMatcher.match(uri);
+        switch (match) {
+            case WEATHER:
+                db.beginTransaction();
+                int returnCount = 0;
+                try {
+                    for (ContentValues value : values) {
+                        long _id = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, value);
+                        if (_id != -1) {
+                            returnCount++;
+                        }
+                    }
+                    db.setTransactionSuccessful();
+                } finally {
+                    db.endTransaction();
+                }
+                getContext().getContentResolver().notifyChange(uri, null);
+                return returnCount;
+            default:
+                return super.bulkInsert(uri, values);
+        }
     }
 }

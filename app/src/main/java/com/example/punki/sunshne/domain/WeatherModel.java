@@ -7,11 +7,13 @@ import java.util.Date;
 public class WeatherModel {
     public final String country;
     public final String city;
+    public final String locationSetting;
     public final Collection<Day> days;
 
     public WeatherModel(String country, String city, Collection<Day> days) {
         this.country = country;
         this.city = city;
+        locationSetting = "todo";
         this.days = new ArrayList<Day>(days);
     }
 

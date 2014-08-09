@@ -1,4 +1,4 @@
-package com.example.punki.sunshne.data;
+package com.example.punki.sunshne.storage;
 
 /*
  * Copyright (C) 2014 The Android Open Source Project
@@ -16,9 +16,17 @@ package com.example.punki.sunshne.data;
  * limitations under the License.
  */
 import android.content.ContentUris;
+import android.content.ContentValues;
 import android.net.Uri;
 import android.provider.BaseColumns;
-import android.renderscript.Long3;
+
+import com.example.punki.sunshne.domain.WeatherModel;
+
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Defines table and column names for the weather database.
@@ -103,6 +111,8 @@ public class WeatherContract {
             return uri.getQueryParameter(COLUMN_DATETEXT);
         }
     }
+
+
     public static final class LocationEntry implements BaseColumns {
         public static final String TABLE_NAME = "location";
 
@@ -126,5 +136,43 @@ public class WeatherContract {
         public static long getLocationIdFromUri(Uri uri) {
             return ContentUris.parseId(uri);
         }
+    }
+
+    public static ContentValues mapToLocationContract(WeatherModel weatherModel) {
+        ContentValues location = new ContentValues();
+        location.put(LocationEntry.COLUMN_CITY_NAME, weatherModel.city);
+        location.put(LocationEntry.COLUMN_COORD_LAT, "-1");
+        location.put(LocationEntry.COLUMN_COORD_LONG, "-1");
+        location.put(LocationEntry.COLUMN_LOCATION_SETTING, weatherModel.locationSetting);
+
+        return location;
+    }
+
+    public static ContentValues[] mapToWeatherContract(Uri locationUri, WeatherModel weatherModel) {
+        List<ContentValues> weathers = new ArrayList<ContentValues>(weatherModel.days.size());
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        DecimalFormat decimalFormat=new DecimalFormat("##.00");
+        for (WeatherModel.Day day : weatherModel.days) {
+            ContentValues w = new ContentValues();
+            w.put(WeatherEntry.COLUMN_LOC_KEY,ContentUris.parseId(locationUri));
+            w.put(WeatherEntry.COLUMN_SHORT_DESC, day.weather);
+
+            w.put(WeatherEntry.COLUMN_DATETEXT, dateFormat.format(day.date));
+
+            w.put(WeatherEntry.COLUMN_MAX_TEMP, decimalFormat.format(day.maxTemperature));
+            w.put(WeatherEntry.COLUMN_MIN_TEMP, decimalFormat.format(day.minTemperature));
+            w.put(WeatherEntry.COLUMN_DEGREES, "-1");
+            w.put(WeatherEntry.COLUMN_HUMIDITY, "-1");
+            w.put(WeatherEntry.COLUMN_PRESSURE, "-1");
+            w.put(WeatherEntry.COLUMN_WIND_SPEED, "-1");
+            w.put(WeatherEntry.COLUMN_WEATHER_ID, "-1");
+
+            weathers.add(w);
+        }
+        return weathers.toArray(new ContentValues[weathers.size()]);
+    }
+
+    public static Object[] uniqueQuery(WeatherModel weatherModel) {
+        return new Object[]{LocationEntry.COLUMN_LOCATION_SETTING+"=?", new String[]{weatherModel.locationSetting}};
     }
 }

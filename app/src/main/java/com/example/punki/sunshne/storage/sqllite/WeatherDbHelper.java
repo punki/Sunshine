@@ -13,13 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package com.example.punki.sunshne.data;
+package com.example.punki.sunshne.storage.sqllite;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import static com.example.punki.sunshne.data.WeatherContract.*;
+import static com.example.punki.sunshne.storage.WeatherContract.*;
 
 /**
  * Manages a local database for weather data.
