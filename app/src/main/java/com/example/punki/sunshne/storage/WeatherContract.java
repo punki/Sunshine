@@ -23,8 +23,10 @@ import android.provider.BaseColumns;
 import com.example.punki.sunshne.domain.WeatherModel;
 
 import java.text.DecimalFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -38,6 +40,27 @@ public class WeatherContract {
     public static final Uri BASE_CONTENT_URI= Uri.parse("content://"+CONTENT_AUTHORITY);
     public static final String PATH_WEATHER = "weather";
     public static final String PATH_LOCATION = "location";
+    public static final String DB_DATE_FORMAT = "yyyyMMdd";
+
+    public static String getDbDateString(Date date) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat(DB_DATE_FORMAT);
+        return dateFormat.format(date);
+    }
+
+    /**
+     * Converts a dateText to a long Unix time representation
+     * @param dateText the input date string
+     * @return the Date object
+     */
+    public static Date getDateFromDb(String dateText) {
+        SimpleDateFormat dbDateFormat = new SimpleDateFormat(DB_DATE_FORMAT);
+        try {
+            return dbDateFormat.parse(dateText);
+        } catch ( ParseException e ) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     /* Inner class that defines the table contents of the weather table */
     public static final class WeatherEntry implements BaseColumns {
@@ -150,14 +173,13 @@ public class WeatherContract {
 
     public static ContentValues[] mapToWeatherContract(Uri locationUri, WeatherModel weatherModel) {
         List<ContentValues> weathers = new ArrayList<ContentValues>(weatherModel.days.size());
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
         DecimalFormat decimalFormat=new DecimalFormat("##.00");
         for (WeatherModel.Day day : weatherModel.days) {
             ContentValues w = new ContentValues();
             w.put(WeatherEntry.COLUMN_LOC_KEY,ContentUris.parseId(locationUri));
             w.put(WeatherEntry.COLUMN_SHORT_DESC, day.weather);
 
-            w.put(WeatherEntry.COLUMN_DATETEXT, dateFormat.format(day.date));
+            w.put(WeatherEntry.COLUMN_DATETEXT, getDbDateString(day.date));
 
             w.put(WeatherEntry.COLUMN_MAX_TEMP, decimalFormat.format(day.maxTemperature));
             w.put(WeatherEntry.COLUMN_MIN_TEMP, decimalFormat.format(day.minTemperature));
@@ -171,6 +193,7 @@ public class WeatherContract {
         }
         return weathers.toArray(new ContentValues[weathers.size()]);
     }
+
 
     public static Object[] uniqueQuery(WeatherModel weatherModel) {
         return new Object[]{LocationEntry.COLUMN_LOCATION_SETTING+"=?", new String[]{weatherModel.locationSetting}};

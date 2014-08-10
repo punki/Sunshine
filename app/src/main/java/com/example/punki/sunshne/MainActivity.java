@@ -77,9 +77,7 @@ public class MainActivity extends Activity implements ForecastFragment.ForecastF
     }
 
     private String getLocation() {
-        SharedPreferences sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this);
-        return sharedPreferences.getString(getString(R.string.pref_location_key),
-                    getString(R.string.pref_location_default));
+        return Utility.getPreferredLocation(this);
     }
 
     @Override

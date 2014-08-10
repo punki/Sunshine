@@ -23,11 +23,9 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
-    private final Presenter<WeatherModel> presenter;
     private final ContentResolver contentResolver;
 
-    protected FetchWeatherTask(Presenter<WeatherModel> presenter, ContentResolver contentResolver) {
-        this.presenter = presenter;
+    protected FetchWeatherTask(ContentResolver contentResolver) {
         this.contentResolver = contentResolver;
     }
 
@@ -57,12 +55,6 @@ public abstract class FetchWeatherTask<Params> extends AsyncTask<Params, Integer
             Log.v(LOG_TAG, " there was location, skipping insert");
             return WeatherContract.LocationEntry.buildLocationUri(cursor.getLong(0));
         }
-    }
-
-
-    @Override
-    protected void onPostExecute(WeatherModel weatherModel) {
-        presenter.display(weatherModel);
     }
 
     protected abstract WeatherModel doInBackgroundSpecific(Params... params);

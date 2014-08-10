@@ -16,5 +16,6 @@
     <string name="pref_unit_default">metric</string>
     <string name="action_view_location">Location</string>
     <string name="action_share_title">Share</string>
+    <string name="pref_units_metric">metric</string>
 
 </resources>

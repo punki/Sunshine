@@ -4,7 +4,6 @@ import android.content.ContentResolver;
 import android.net.Uri;
 import android.util.Log;
 
-import com.example.punki.sunshne.view.Presenter;
 import com.example.punki.sunshne.domain.WeatherModel;
 import com.example.punki.sunshne.FetchWeatherTask;
 import com.example.punki.sunshne.openweathermap.model.City;
@@ -24,8 +23,8 @@ public class OpenWeatherFetchTask extends FetchWeatherTask<OpenWeatherFetchTask.
     private final String LOG_TAG = OpenWeatherFetchTask.class.getSimpleName();
     private final Gson gson = new Gson();
 
-    public OpenWeatherFetchTask(Presenter<WeatherModel> presenter, ContentResolver contentResolver) {
-        super(presenter, contentResolver);
+    public OpenWeatherFetchTask(ContentResolver contentResolver) {
+        super(contentResolver);
     }
 
     @Override
