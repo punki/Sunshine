@@ -134,6 +134,15 @@ public class DetailActivity extends Activity {
             super.onActivityCreated(savedInstanceState);
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+            if (mLocation != null && !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
+                mLocation = Utility.getPreferredLocation(getActivity());
+                getLoaderManager().restartLoader(DETAIL_FORECAST_LOADER, null, this);
+            }
+        }
+
         private void initLocation(Bundle savedInstanceState) {
             if (savedInstanceState != null && savedInstanceState.containsKey(LOCATION_KEY)) {
                 mLocation = savedInstanceState.getString(LOCATION_KEY);
