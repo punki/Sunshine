@@ -14,7 +14,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
@@ -46,12 +45,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        loadDataFromServer();
-    }
-
-    @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         this.setHasOptionsMenu(true);
@@ -63,13 +56,17 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 R.layout.list_item_forecast,
                 null,
                 // the column names to use to fill the textviews
-                new String[]{WeatherContract.WeatherEntry.COLUMN_DATETEXT,
+                new String[]{
+                        WeatherContract.WeatherEntry.COLUMN_DATETEXT,
+                        WeatherContract.LocationEntry.COLUMN_CITY_NAME,
                         WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
                         WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
                         WeatherContract.WeatherEntry.COLUMN_MIN_TEMP
                 },
                 // the textviews to fill with the data pulled from the columns above
-                new int[]{R.id.list_item_date_textview,
+                new int[]{
+                        R.id.list_item_date_textview,
+                        R.id.list_item_location_textview,
                         R.id.list_item_forecast_textview,
                         R.id.list_item_high_textview,
                         R.id.list_item_low_textview
@@ -109,16 +106,26 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                SimpleCursorAdapter adapter = (SimpleCursorAdapter) parent.getAdapter();
-                Cursor cursor = adapter.getCursor();
-                CharSequence text = Utility.formatDate(cursor.getString(COL_WEATHER_DATE))
-                        + "-"
-                        + cursor.getString(COL_WEATHER_DESC);
+                Cursor cursor = ((SimpleCursorAdapter)parent.getAdapter()).getCursor();
+                if (cursor != null && cursor.moveToPosition(position)) {
+                    String date = cursor.getString(COL_WEATHER_DATE);
+                    String dateString = Utility.formatDate(date);
+                    String weatherDescription = cursor.getString(COL_WEATHER_DESC);
+                    String location = cursor.getString(COL_CITY_NAME);
 
+                    boolean isMetric = Utility.isMetric(getActivity());
+                    String high = Utility.formatTemperature(
+                            cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
+                    String low = Utility.formatTemperature(
+                            cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
 
-                Intent detailIntent = new Intent(getActivity(), DetailActivity.class);
-                detailIntent.putExtra(Intent.EXTRA_TEXT, text);
-                startActivity(detailIntent);
+                    String detailString = String.format("%s %s - %s - %s/%s",
+                            dateString,location, weatherDescription, high, low);
+
+                    Intent intent = new Intent(getActivity(), DetailActivity.class)
+                            .putExtra(DetailActivity.INTENT_DATE, date);
+                    startActivity(intent);
+                }
             }
         };
     }
@@ -130,7 +137,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         FetchWeatherTask<OpenWeatherFetchTask.Param> fetchWeatherTask = new OpenWeatherFetchTask(
                 getActivity().getContentResolver());
 
-        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 7));
+        fetchWeatherTask.execute(new OpenWeatherFetchTask.Param(ffParam.location, 11));
     }
 
     @Override
@@ -145,6 +152,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mLocation != null && !mLocation.equals(Utility.getPreferredLocation(getActivity()))) {
+            getLoaderManager().restartLoader(FORECAST_LOADER, null, this);
+        }
     }
 
     @Override
@@ -172,7 +187,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
             WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
             WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
             WeatherContract.WeatherEntry.COLUMN_MIN_TEMP,
-            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING
+            WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING,
+            WeatherContract.LocationEntry.COLUMN_CITY_NAME
     };
 
     // These indices are tied to FORECAST_COLUMNS.  If FORECAST_COLUMNS changes, these
@@ -184,6 +200,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     public static final int COL_WEATHER_MAX_TEMP = 3;
     public static final int COL_WEATHER_MIN_TEMP = 4;
     public static final int COL_LOCATION_SETTING = 5;
+    public static final int COL_CITY_NAME = 6;
 
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
