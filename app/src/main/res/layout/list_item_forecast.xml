@@ -19,7 +19,7 @@
     <LinearLayout
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
+        android:layout_weight="2"
         android:orientation="vertical"
         android:paddingLeft="16dp">
 
@@ -41,6 +41,7 @@
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_weight="1"
         android:orientation="vertical">
 
         <TextView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -58,7 +59,7 @@
     </LinearLayout>
 
     <TextView xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/list_it    em_location_textview"
+        android:id="@+id/list_item_location_textview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="location" />
