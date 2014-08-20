@@ -71,19 +71,6 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                 Cursor cursor = ((CursorAdapter)parent.getAdapter()).getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
                     String date = cursor.getString(COL_WEATHER_DATE);
-                    String dateString = Utility.formatDate(date);
-                    String weatherDescription = cursor.getString(COL_WEATHER_DESC);
-                    String location = cursor.getString(COL_CITY_NAME);
-
-                    boolean isMetric = Utility.isMetric(getActivity());
-                    String high = Utility.formatTemperature(
-                            cursor.getDouble(COL_WEATHER_MAX_TEMP), isMetric);
-                    String low = Utility.formatTemperature(
-                            cursor.getDouble(COL_WEATHER_MIN_TEMP), isMetric);
-
-                    String detailString = String.format("%s %s - %s - %s/%s",
-                            dateString,location, weatherDescription, high, low);
-
                     Intent intent = new Intent(getActivity(), DetailActivity.class)
                             .putExtra(DetailActivity.INTENT_DATE, date);
                     startActivity(intent);
