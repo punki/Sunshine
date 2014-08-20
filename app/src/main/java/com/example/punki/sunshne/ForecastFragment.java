@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CursorAdapter;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
@@ -23,6 +24,7 @@ import com.example.punki.sunshne.domain.Units;
 import com.example.punki.sunshne.openweathermap.OpenWeatherFetchTask;
 import com.example.punki.sunshne.storage.WeatherContract;
 import com.example.punki.sunshne.mapper.UnitConverterMapper;
+import com.example.punki.sunshne.view.ForecastAdapter;
 
 import java.util.Date;
 
@@ -31,7 +33,7 @@ import java.util.Date;
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor>{
 
-    private SimpleCursorAdapter weatherAdapter;
+    private ForecastAdapter weatherAdapter;
 
     public ForecastFragment() {
     }
@@ -51,51 +53,11 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     }
 
     private void initForecastAdapter(View rootView) {
-        weatherAdapter = new SimpleCursorAdapter(
+        weatherAdapter = new ForecastAdapter(
                 getActivity(),
-                R.layout.list_item_forecast,
                 null,
-                // the column names to use to fill the textviews
-                new String[]{
-                        WeatherContract.WeatherEntry.COLUMN_DATETEXT,
-                        WeatherContract.LocationEntry.COLUMN_CITY_NAME,
-                        WeatherContract.WeatherEntry.COLUMN_SHORT_DESC,
-                        WeatherContract.WeatherEntry.COLUMN_MAX_TEMP,
-                        WeatherContract.WeatherEntry.COLUMN_MIN_TEMP
-                },
-                // the textviews to fill with the data pulled from the columns above
-                new int[]{
-                        R.id.list_item_date_textview,
-                        R.id.list_item_location_textview,
-                        R.id.list_item_forecast_textview,
-                        R.id.list_item_high_textview,
-                        R.id.list_item_low_textview
-                },
                 0
         );
-
-        weatherAdapter.setViewBinder(new SimpleCursorAdapter.ViewBinder() {
-            @Override
-            public boolean setViewValue(View view, Cursor cursor, int columnIndex) {
-                boolean isMetric = Utility.isMetric(getActivity());
-                switch (columnIndex) {
-                    case COL_WEATHER_MAX_TEMP:
-                    case COL_WEATHER_MIN_TEMP: {
-                        // we have to do some formatting and possibly a conversion
-                        ((TextView) view).setText(Utility.formatTemperature(
-                                cursor.getDouble(columnIndex), isMetric));
-                        return true;
-                    }
-                    case COL_WEATHER_DATE: {
-                        String dateString = cursor.getString(columnIndex);
-                        TextView dateView = (TextView) view;
-                        dateView.setText(Utility.formatDate(dateString));
-                        return true;
-                    }
-                }
-                return false;
-            }
-        });
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(weatherAdapter);
@@ -106,7 +68,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         return new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Cursor cursor = ((SimpleCursorAdapter)parent.getAdapter()).getCursor();
+                Cursor cursor = ((CursorAdapter)parent.getAdapter()).getCursor();
                 if (cursor != null && cursor.moveToPosition(position)) {
                     String date = cursor.getString(COL_WEATHER_DATE);
                     String dateString = Utility.formatDate(date);
